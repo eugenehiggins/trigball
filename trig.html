@@ -25,60 +25,67 @@
 		var c=document.getElementById("myCanvas");
 		var ctx=c.getContext("2d");
 
-		var drawBall = function (x,y,radius) {
-			ctx.clearRect(0, 0, c.width, c.height);
-			ctx.beginPath();
-			ctx.arc(x,y,50,0,2*Math.PI);
-			ctx.stroke();	
+		// increment ball x/y values, then draw it
+		var drawScreen = function (balls) {
+			for (ball of balls) {
+				ball.p1.x += ball.xunits;
+				ball.p1.y += ball.yunits;
+
+				if (ball.p1.x > c.width - ball.radius || ball.p1.x < ball.radius) {
+					ball.angle = 180 - ball.angle;
+					ball.update();
+					//updateBall();
+				} else if (ball.p1.y > (c.height - ball.radius) || ball.p1.y < ball.radius){
+					ball.angle = 360 - ball.angle;
+					ball.update();
+				}
+
+				ball.draw(ball.p1.x, ball.p1.y);
+			}
 		}
 
-		var updateBall = function () {
-			radians = angle * Math.PI/180;
-			xunits = Math.cos(radians) * speed;
-			yunits = Math.sin(radians) * speed;
-		}
 
-		var drawScreen = function () {
-			var d = radius * 2;
-			p1.x += xunits;
-			p1.y += yunits;
+		var Ball = function(s=5,a=45,r=0,R=50,p,xu=0,yu=0) {
+			this.speed = s;
+			this.angle = Math.floor(Math.random() * 360) + 1  ;
+			this.radians = 0;
+			this.radius = 50;
+			this.p1 = { x:this.radius + 10, y:this.radius + 10};
+			this.xunits = 0;
+			this.yunits = 0;
 
-			if (p1.x > c.width - radius || p1.x < radius) {
-				angle = 180 - angle;
-				updateBall();
-			} else if (p1.y > (c.height - radius) || p1.y < radius){
-				angle = 360 - angle;
-				updateBall();
+			this.update = function (){
+				this.radians = this.angle * Math.PI/180;
+				this.xunits = Math.cos(this.radians) * this.speed;
+				this.yunits = Math.sin(this.radians) * this.speed;
 			}
 
-			drawBall(p1.x, p1.y);
+			this.draw = function (x,y,radius) {
+				ctx.clearRect(0, 0, c.width, c.height);
+				ctx.beginPath();
+				ctx.arc(x,y,50,0,2*Math.PI);
+				ctx.stroke();	
+			}
+
 		}
 
-		window.addEventListener('resize', resizeCanvas, false);
+		var balls = new Array(5);
+		var init = new function () {
+			
+			// for (ball of balls) {
+			// 	ball = new Ball();
+			// }
 
-		function resizeCanvas() {
-			myCanvas.width = window.innerWidth;
-			myCanvas.height = window.innerHeight;
-
-			/**
-			* Your drawings need to be inside this function otherwise they will be reset when 
-			* you resize the browser window and the canvas goes will be cleared.
-			*/
-			drawBall(); 
-		}
-		resizeCanvas();
-
-		var Ball = {
-			var speed = 5;
-			var angle = 45;
-			var radians = 0;
-			var radius = 50;
-			var p1 = { x:radius + 10, y:radius + 10};
-			var xunits = 0;
-			var yunits = 0;
+			for (var i = 0; i < balls.length; i++) {
+				balls[i] = new Ball();
+				b = balls[i];
+				b.update();
+				b.draw(b.p1.x, b.p1.y, b.radius);
+			}
 		}
 
-		var ball = new Ball();
+		//create ball. This should send parameters
+		//var ball = new Ball();
 		// var speed = 5;
 		// var angle = 45;
 		// var radians = 0;
@@ -86,19 +93,45 @@
 		// var p1 = { x:radius + 10, y:radius + 10};
 		// var xunits = 0;
 		// var yunits = 0;
-		updateBall();
+		//updateBall();
 
-		drawBall(p1.x, p1.y, radius); 
+		// initial ball positioning
+		//ball.update();
 
-		setInterval(drawScreen, 33);
+		//initial ball draw
+		//ball.draw(ball.p1.x, ball.p1.y, ball.radius);
 
+		//start the drawScreen loop
+		setInterval(drawScreen, 33, balls);
+
+		window.addEventListener('resize', resizeCanvas, false);
+
+		// responds to size of window
+		function resizeCanvas(balls) {
+			myCanvas.width = window.innerWidth;
+			myCanvas.height = window.innerHeight;
+
+			/**
+			* Your drawings need to be inside this function otherwise they will be reset when 
+			* you resize the browser window and the canvas goes will be cleared.
+			*/
+			for (ball of balls) {
+				ball.draw(); 
+			}
+		}
+		
+		//initial resize, just to fill screen
+		resizeCanvas(balls);
+
+		// position the form
 		var f = document.getElementById("controls");
 		f.style.position = "absolute";
 		f.style.left = "30px";
 		f.style.top = "30px";
 
+		// angle input listener
 		var angleControl = document.getElementById("angle");
-		angleControl.value = angle;
+		angleControl.value = 45;
 		angleControl.addEventListener("change", function(event){
 			if (!isNaN(angleControl.value)){
 				angle = angleControl.value;
@@ -106,15 +139,16 @@
 			}
 		});
 
+		// speed input listener
 		var speedControl = document.getElementById("speed");
-		speedControl.value = speed;
+		speedControl.value = 5;
 		speedControl.addEventListener("change", function(event){
 			if (!isNaN(speedControl.value)) {
 				speed = speedControl.value;
 				updateBall();
 			}
 		});
-		//rect.left = 30px;
+
 	</script>
 </body>
 </html>
