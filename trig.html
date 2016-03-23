@@ -70,7 +70,7 @@
 		}
 
 		var balls = new Array(5);
-		var init = new function () {
+		var init = function () {
 			
 			// for (ball of balls) {
 			// 	ball = new Ball();
@@ -83,6 +83,8 @@
 				b.draw(b.p1.x, b.p1.y, b.radius);
 			}
 		}
+
+		init();
 
 		//create ball. This should send parameters
 		//var ball = new Ball();
@@ -115,8 +117,8 @@
 			* Your drawings need to be inside this function otherwise they will be reset when 
 			* you resize the browser window and the canvas goes will be cleared.
 			*/
-			for (ball of balls) {
-				ball.draw(); 
+			for (var i = 0; i < balls.length; i++) {
+				balls[i].draw(); 
 			}
 		}
 		
