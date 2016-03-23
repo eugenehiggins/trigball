@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Trig</title>
+	<style>
+		body {
+			font-family: helvetica,arial,sans-serif;
+		}
+	</style>
+</head>
+<body>
+
+
+	<canvas id="myCanvas" width="100" height="100" style="border:1px solid #d3d3d3;">
+		Your browser does not support the HTML5 canvas tag.</canvas>
+	
+	<form id="controls">
+		<p>Angle: <input type="number" id="angle" name="angle" default></p>
+		<p>Speed: <input type="number" id="speed" name="speed"></p>
+	</form>
+	
+	<script>
+
+		var c=document.getElementById("myCanvas");
+		var ctx=c.getContext("2d");
+
+		var drawBall = function (x,y,radius) {
+			ctx.clearRect(0, 0, c.width, c.height);
+			ctx.beginPath();
+			ctx.arc(x,y,50,0,2*Math.PI);
+			ctx.stroke();	
+		}
+
+		var updateBall = function () {
+			radians = angle * Math.PI/180;
+			xunits = Math.cos(radians) * speed;
+			yunits = Math.sin(radians) * speed;
+		}
+
+		var drawScreen = function () {
+			var d = radius * 2;
+			p1.x += xunits;
+			p1.y += yunits;
+
+			if (p1.x > c.width - radius || p1.x < radius) {
+				angle = 180 - angle;
+				updateBall();
+			} else if (p1.y > (c.height - radius) || p1.y < radius){
+				angle = 360 - angle;
+				updateBall();
+			}
+
+			drawBall(p1.x, p1.y);
+		}
+
+		window.addEventListener('resize', resizeCanvas, false);
+
+		function resizeCanvas() {
+			myCanvas.width = window.innerWidth;
+			myCanvas.height = window.innerHeight;
+
+			/**
+			* Your drawings need to be inside this function otherwise they will be reset when 
+			* you resize the browser window and the canvas goes will be cleared.
+			*/
+			drawBall(); 
+		}
+		resizeCanvas();
+
+		var Ball = {
+			var speed = 5;
+			var angle = 45;
+			var radians = 0;
+			var radius = 50;
+			var p1 = { x:radius + 10, y:radius + 10};
+			var xunits = 0;
+			var yunits = 0;
+		}
+
+		var ball = new Ball();
+		// var speed = 5;
+		// var angle = 45;
+		// var radians = 0;
+		// var radius = 50;
+		// var p1 = { x:radius + 10, y:radius + 10};
+		// var xunits = 0;
+		// var yunits = 0;
+		updateBall();
+
+		drawBall(p1.x, p1.y, radius); 
+
+		setInterval(drawScreen, 33);
+
+		var f = document.getElementById("controls");
+		f.style.position = "absolute";
+		f.style.left = "30px";
+		f.style.top = "30px";
+
+		var angleControl = document.getElementById("angle");
+		angleControl.value = angle;
+		angleControl.addEventListener("change", function(event){
+			if (!isNaN(angleControl.value)){
+				angle = angleControl.value;
+				updateBall();
+			}
+		});
+
+		var speedControl = document.getElementById("speed");
+		speedControl.value = speed;
+		speedControl.addEventListener("change", function(event){
+			if (!isNaN(speedControl.value)) {
+				speed = speedControl.value;
+				updateBall();
+			}
+		});
+		//rect.left = 30px;
+	</script>
+</body>
+</html>
