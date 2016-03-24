@@ -25,6 +25,18 @@
 		var c=document.getElementById("myCanvas");
 		var ctx=c.getContext("2d");
 
+		c.addEventListener('click', function(event){
+				var clickX = event.clientX;
+				var clickY = event.clientY;
+
+				for (node of nodes) {
+					
+				}
+
+				console.log(event);
+		},false);
+
+
 		// responds to size of window
 		window.addEventListener('resize', resizeCanvas, false);
 		function resizeCanvas() {
@@ -52,37 +64,63 @@
 				this.yunits = Math.sin(this.radians) * this.speed;
 			}
 
-			this.draw = function () {
-				ctx.clearRect(0, 0, c.width, c.height);
-				ctx.beginPath();
-				ctx.arc(this.p1.x,this.p1.y,this.radius,0,2*Math.PI);
-				ctx.stroke();	
-			}
 
 		}
+
+		Ball.drawBalls = function () {
+			ctx.clearRect(0, 0, c.width, c.height);
+
+			for (node of nodes) {
+
+				node.p1.x += node.xunits;
+				node.p1.y += node.yunits;
+
+				if (node.p1.x > c.width - node.radius || node.p1.x < node.radius) {
+					node.angle = 180 - node.angle;
+					//node.update();
+					//updateBall();
+				} else if (node.p1.y > (c.height - node.radius) || node.p1.y < node.radius){
+					node.angle = 360 - node.angle;
+					//node.update();
+				}
+
+				node.radians = node.angle * Math.PI/180;
+				node.xunits = Math.cos(node.radians) * node.speed;
+				node.yunits = Math.sin(node.radians) * node.speed;
+
+				ctx.beginPath();
+				ctx.arc(node.p1.x,node.p1.y,node.radius,0,2*Math.PI);
+				ctx.stroke();
+			}
+		}
+
 		// position the form
 		var f = document.getElementById("controls");
 		f.style.position = "absolute";
 		f.style.left = "30px";
 		f.style.top = "30px";
 
-		// var ball = new Ball();
-		// ball.update();
-		// ball.draw();
+		// var node = new Ball();
+		// node.update();
+		// node.draw();
 
-		var balls = new Array(5);
+		var nodes = new Array(5);
 		var init = function () {
 			
-			// for (ball of balls) {
-			// 	ball = new Ball();
+			// for (node of nodes) {
+			// 	node = new Ball();
 			// }
 
-			for (var i = 0; i < balls.length; i++) {
-				balls[i] = new Ball();
-				b = balls[i];
+			for (var i = 0; i < nodes.length; i++) {
+				nodes[i] = new Ball();
+				b = nodes[i];
+
 				b.update();
-				b.draw();
+				//b.draw();
 			}
+
+			//Ball.drawBalls();
+			setInterval(Ball.drawBalls,33);
 		}
 
 		init();
